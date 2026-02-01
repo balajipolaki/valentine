@@ -12,50 +12,77 @@ height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-background:linear-gradient(135deg,#ff4d6d,#ffb3c6);
-font-family:Arial,sans-serif;
+background:radial-gradient(circle,#ff4d6d,#ffb3c6,#ffe6f0);
+font-family:'Arial',sans-serif;
 overflow:hidden;
 }
 
 .card{
 background:white;
 padding:30px;
-border-radius:20px;
+border-radius:25px;
 text-align:center;
 width:90%;
-max-width:400px;
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
+max-width:420px;
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
+animation:entry 1.2s ease;
+}
+
+@keyframes entry{
+0%{transform:scale(0) rotate(-10deg);opacity:0;}
+100%{transform:scale(1);opacity:1;}
 }
 
 h1{
 color:#ff1e56;
-animation:pulse 1.5s infinite;
+animation:pulse 1.4s infinite;
 }
 
 @keyframes pulse{
 0%{transform:scale(1);}
-50%{transform:scale(1.05);}
+50%{transform:scale(1.08);}
 100%{transform:scale(1);}
+}
+
+.dialogue{
+font-style:italic;
+color:#444;
+margin:10px 0;
+display:none;
 }
 
 .buttons{
 position:relative;
-height:120px;
-margin-top:20px;
+height:140px;
+margin-top:15px;
 }
 
 button{
-padding:12px 25px;
+padding:12px 26px;
 border:none;
-border-radius:25px;
+border-radius:30px;
 font-size:16px;
 cursor:pointer;
 font-weight:bold;
+transition:0.2s;
 }
 
 #yes{
-background:#38b000;
+background:linear-gradient(135deg,#06d6a0,#1b9aaa);
 color:white;
+animation:heartbeat 1.3s infinite;
+}
+
+@keyframes heartbeat{
+0%{transform:scale(1);}
+25%{transform:scale(1.1);}
+50%{transform:scale(1);}
+75%{transform:scale(1.15);}
+100%{transform:scale(1);}
+}
+
+#yes:hover{
+transform:scale(1.2);
 }
 
 #no{
@@ -70,17 +97,25 @@ font-size:20px;
 color:#118ab2;
 display:none;
 font-weight:bold;
+text-shadow:0 0 8px #ffd166;
 }
 
 .hearts span{
 position:fixed;
 top:-10px;
-font-size:20px;
+font-size:22px;
 animation:fall 5s linear infinite;
 }
 
 @keyframes fall{
 to{transform:translateY(110vh);}
+}
+
+.music{
+margin-top:10px;
+background:#ffd166;
+color:black;
+font-size:14px;
 }
 </style>
 </head>
@@ -89,31 +124,55 @@ to{transform:translateY(110vh);}
 
 <div class="hearts" id="hearts"></div>
 
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2e6a40d01c.mp3" type="audio/mpeg">
+</audio>
+
 <div class="card">
 
 <h1>Swatee, will you be my Valentine? 💖</h1>
 
+<div class="dialogue" id="dialogue">
+“Tum agar saath ho… toh sab kuch perfect hai ❤️”
+</div>
+
 <div class="buttons">
-<button id="yes">Yes 😍</button>
+<button id="yes">YES 😍</button>
 <button id="no">No 🙈</button>
 </div>
 
+<button class="music" id="musicBtn">▶ Play Song</button>
+
 <div id="msg">
-IT’S A LOVE STORY NOW 💍❤️<br>
-Main tumse hamesha pyaar karunga 😭💕
+IT’S A LOVE STORY NOW 💍❤️✨<br>
+My favorite notification is you 😭💕
 </div>
 
 </div>
 
 <script>
+
 const noBtn=document.getElementById("no");
 const yesBtn=document.getElementById("yes");
 const msg=document.getElementById("msg");
 const hearts=document.getElementById("hearts");
+const music=document.getElementById("music");
+const musicBtn=document.getElementById("musicBtn");
+const dialogue=document.getElementById("dialogue");
+
+const yesTexts=[
+"YES 😍",
+"YES PLEASE 💕",
+"MARRY ME 😭❤️",
+"OF COURSE 💍",
+"ALWAYS ❤️"
+];
+
+let playing=false;
 
 function moveNo(){
-const x=Math.random()*200;
-const y=Math.random()*80;
+const x=Math.random()*220;
+const y=Math.random()*90;
 noBtn.style.left=x+"px";
 noBtn.style.top=y+"px";
 }
@@ -124,15 +183,40 @@ e.preventDefault();
 moveNo();
 });
 
+setInterval(()=>{
+yesBtn.textContent=yesTexts[Math.floor(Math.random()*yesTexts.length)];
+},1500);
+
+musicBtn.onclick=()=>{
+if(!playing){
+music.play();
+musicBtn.textContent="⏸ Pause Song";
+playing=true;
+}else{
+music.pause();
+musicBtn.textContent="▶ Play Song";
+playing=false;
+}
+};
+
 yesBtn.onclick=()=>{
+
 msg.style.display="block";
+dialogue.style.display="block";
 noBtn.style.display="none";
 yesBtn.disabled=true;
+
+if(!playing){
+music.play();
+playing=true;
+musicBtn.textContent="⏸ Pause Song";
+}
+
 confetti();
 };
 
 function confetti(){
-for(let i=0;i<100;i++){
+for(let i=0;i<120;i++){
 let s=document.createElement("span");
 s.innerHTML="❤️";
 s.style.left=Math.random()*100+"vw";
